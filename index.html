@@ -1,6 +1,5 @@
 <div class="contact-form">
-    <form action="https://api.telegram.org/bot6324640153:AAHRE-unKqefW9TSIsjg9fUeXH3HqI3EhvE/sendMessage" method="post" id="telegramForm">
-        <input type="hidden" name="chat_id" value="5755109067">
+    <form id="telegramForm">
         <div class="form-group">
             <input type="text" name="name" id="name" placeholder="Your Name" required>
         </div>
@@ -16,6 +15,43 @@
         <button type="submit" class="submit-btn">Send Message</button>
     </form>
 </div>
+
+<script>
+    document.getElementById('telegramForm').addEventListener('submit', function(e) {
+        e.preventDefault();
+
+        // Collect the form data
+        let name = document.getElementById('name').value;
+        let email = document.getElementById('email').value;
+        let subject = document.getElementById('subject').value;
+        let message = document.getElementById('message').value;
+
+        // Construct the message to send to Telegram
+        let telegramMessage = `Name: ${name}\nEmail: ${email}\nSubject: ${subject}\nMessage: ${message}`;
+
+        // Replace with your bot token and chat ID
+        let botToken = '6324640153:AAHRE-unKqefW9TSIsjg9fUeXH3HqI3EhvE';
+        let chatId = '5755109067';
+
+        // Send the data to the Telegram API
+        let url = `https://api.telegram.org/bot${botToken}/sendMessage?chat_id=${chatId}&text=${encodeURIComponent(telegramMessage)}`;
+
+        // Send the request
+        fetch(url)
+            .then(response => response.json())
+            .then(data => {
+                if (data.ok) {
+                    alert('Message sent successfully!');
+                } else {
+                    alert('Error sending message. Please try again.');
+                }
+            })
+            .catch(error => {
+                alert('Error connecting to Telegram API.');
+                console.error('Error:', error);
+            });
+    });
+</script>
 
 
 <style>
