@@ -1,103 +1,101 @@
-<div class="contact-form">
-    <form id="telegramForm">
-        <div class="form-group">
-            <input type="text" name="name" id="name" placeholder="Your Name" required>
-        </div>
-        <div class="form-group">
-            <input type="email" name="email" id="email" placeholder="Your Email" required>
-        </div>
-        <div class="form-group">
-            <input type="text" name="subject" id="subject" placeholder="Subject" required>
-        </div>
-        <div class="form-group">
-            <textarea name="message" id="message" placeholder="Message" required></textarea>
-        </div>
-        <button type="submit" class="submit-btn">Send Message</button>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Contact Form with Telegram Integration</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+    }
+    .contact-form {
+      max-width: 400px;
+      margin: 50px auto;
+      padding: 20px;
+      border: 1px solid #ccc;
+      border-radius: 10px;
+    }
+    .contact-form label {
+      display: block;
+      margin-bottom: 8px;
+    }
+    .contact-form input, 
+    .contact-form textarea {
+      width: 100%;
+      padding: 10px;
+      margin-bottom: 15px;
+      border-radius: 5px;
+      border: 1px solid #ccc;
+    }
+    .contact-form button {
+      padding: 10px 20px;
+      background-color: #28a745;
+      color: #fff;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+    .contact-form button:disabled {
+      background-color: #ccc;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="contact-form">
+    <h2>Contact Us</h2>
+    <form id="contactForm">
+      <label for="name">Your Name</label>
+      <input type="text" id="name" required>
+
+      <label for="email">Your Email</label>
+      <input type="email" id="email" required>
+
+      <label for="message">Your Message</label>
+      <textarea id="message" rows="4" required></textarea>
+
+      <button type="submit">Send Message</button>
     </form>
-</div>
+    <p id="status"></p>
+  </div>
 
-<script>
-    document.getElementById('telegramForm').addEventListener('submit', function(e) {
-        e.preventDefault();
+  <script>
+    const telegramBotToken = '6324640153:AAHRE-unKqefW9TSIsjg9fUeXH3HqI3EhvE'; // Replace with your bot token
+    const chatId = '5755109067'; // Replace with your chat ID
 
-        // Collect the form data
-        let name = document.getElementById('name').value;
-        let email = document.getElementById('email').value;
-        let subject = document.getElementById('subject').value;
-        let message = document.getElementById('message').value;
+    document.getElementById('contactForm').addEventListener('submit', function(event) {
+      event.preventDefault();
+      
+      const name = document.getElementById('name').value;
+      const email = document.getElementById('email').value;
+      const message = document.getElementById('message').value;
 
-        // Construct the message to send to Telegram
-        let telegramMessage = `Name: ${name}\nEmail: ${email}\nSubject: ${subject}\nMessage: ${message}`;
+      const text = `New contact form submission:\n\nName: ${name}\nEmail: ${email}\nMessage: ${message}`;
 
-        // Replace with your bot token and chat ID
-        let botToken = '6324640153:AAHRE-unKqefW9TSIsjg9fUeXH3HqI3EhvE';
-        let chatId = '5755109067';
-
-        // Send the data to the Telegram API
-        let url = `https://api.telegram.org/bot${botToken}/sendMessage?chat_id=${chatId}&text=${encodeURIComponent(telegramMessage)}`;
-
-        // Send the request
-        fetch(url)
-            .then(response => response.json())
-            .then(data => {
-                if (data.ok) {
-                    alert('Message sent successfully!');
-                } else {
-                    alert('Error sending message. Please try again.');
-                }
-            })
-            .catch(error => {
-                alert('Error connecting to Telegram API.');
-                console.error('Error:', error);
-            });
+      fetch(`https://api.telegram.org/bot${telegramBotToken}/sendMessage`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          chat_id: chatId,
+          text: text
+        })
+      })
+      .then(response => response.json())
+      .then(data => {
+        if (data.ok) {
+          document.getElementById('status').textContent = 'Message sent successfully!';
+          document.getElementById('contactForm').reset();
+        } else {
+          document.getElementById('status').textContent = 'Error sending message.';
+        }
+      })
+      .catch(error => {
+        document.getElementById('status').textContent = 'Failed to send message.';
+      });
     });
-</script>
+  </script>
 
-
-<style>
-  .contact-form {
-    background-color: white;
-    padding: 20px;
-    border-radius: 10px;
-    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
-    max-width: 500px;
-    margin: auto;
-}
-
-.form-group {
-    margin-bottom: 15px;
-}
-
-.form-group input, .form-group textarea {
-    width: 100%;
-    padding: 10px;
-    border-radius: 5px;
-    border: 1px solid #ccc;
-    font-size: 16px;
-}
-
-.form-group input:focus, .form-group textarea:focus {
-    border-color: #66afe9;
-    outline: none;
-}
-
-textarea {
-    resize: none;
-    height: 150px;
-}
-
-.submit-btn {
-    background-color: #00AEEF;
-    color: white;
-    padding: 10px 20px;
-    border: none;
-    border-radius: 5px;
-    font-size: 16px;
-    cursor: pointer;
-}
-
-.submit-btn:hover {
-    background-color: #0078A0;
-}
-
-</style>
+</body>
+</html>
