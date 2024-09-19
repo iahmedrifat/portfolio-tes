@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Contact Form with Telegram Integration</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+    }
+    .contact-form {
+      max-width: 400px;
+      margin: 50px auto;
+      padding: 20px;
+      border: 1px solid #ccc;
+      border-radius: 10px;
+    }
+    .contact-form label {
+      display: block;
+      margin-bottom: 8px;
+    }
+    .contact-form input, 
+    .contact-form textarea {
+      width: 100%;
+      padding: 10px;
+      margin-bottom: 15px;
+      border-radius: 5px;
+      border: 1px solid #ccc;
+    }
+    .contact-form button {
+      padding: 10px 20px;
+      background-color: #28a745;
+      color: #fff;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+    .contact-form button:disabled {
+      background-color: #ccc;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="contact-form">
+    <h2>Contact Us</h2>
+    <form id="contactForm">
+      <label for="name">Your Name</label>
+      <input type="text" id="name" required>
+
+      <label for="email">Your Email</label>
+      <input type="email" id="email" required>
+
+      <label for="message">Your Message</label>
+      <textarea id="message" rows="4" required></textarea>
+
+      <button type="submit">Send Message</button>
+    </form>
+    <p id="status"></p>
+  </div>
+
+  <script>
+    const telegramBotToken = '6324640153:AAHRE-unKqefW9TSIsjg9fUeXH3HqI3EhvE'; // Replace with your bot token
+    const chatId = '5755109067'; // Replace with your chat ID
+
+    document.getElementById('contactForm').addEventListener('submit', function(event) {
+      event.preventDefault();
+      
+      const name = document.getElementById('name').value;
+      const email = document.getElementById('email').value;
+      const message = document.getElementById('message').value;
+
+      const text = `New contact form submission:\n\nName: ${name}\nEmail: ${email}\nMessage: ${message}`;
+
+      fetch(`https://api.telegram.org/bot${telegramBotToken}/sendMessage`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          chat_id: chatId,
+          text: text
+        })
+      })
+      .then(response => response.json())
+      .then(data => {
+        if (data.ok) {
+          document.getElementById('status').textContent = 'Message sent successfully!';
+          document.getElementById('contactForm').reset();
+        } else {
+          document.getElementById('status').textContent = 'Error sending message.';
+        }
+      })
+      .catch(error => {
+        document.getElementById('status').textContent = 'Failed to send message.';
+      });
+    });
+  </script>
+
+</body>
+</html>
